@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset=utf-8 />
+        <title>Windshield Damage Assessment</title>
+		<meta name="Description" content="Windshield Damage Assessment; Code: ESRI JSAPI, Dojo, jQuery">
+		<link rel="stylesheet" type="text/css" href="http://sssgis05.stlouisco.net/arcgis_js_api/library/2.4/arcgis_compact/js/dojo/dijit/themes/claro/claro.css">
+		<link href="http://sssgis05.stlouisco.net/arcgis_js_api/library/2.4/arcgis_compact/js/dojo/dijit/themes/claro/document.css" rel="stylesheet" type="text/css">
+		<style>
+			html, body {
+				overflow:hidden;
+				height:100%;
+			}
+			#centerDiv {
+				height:100%;
+			}
+			
+			.header {
+				font-weight: bold;
+			}
+			.combo {
+				width: 8.5em;
+			}
+			.inline {
+				display: inline;
+			}
+			.inline .dijitButtonNode {
+				height: 32px;
+				line-height: 32px;
+			}
+			.worldzoomIcon, .parcelzoomIcon {
+				background-repeat: no-repeat;
+				background-position: center center;
+				width:32px;
+				height:32px;
+			}
+			.worldzoomIcon {
+				background-image:url(images/nav_fullextent.png);
+			}
+			.parcelzoomIcon {
+				background-image:url(images/i_parcel.png);
+			}
+			.labeledButton .dijitButtonNode{
+				width: 10em;
+			}
+		</style>
+	</head>
+    <body class="claro">
+		<noscript>
+			<div id = "noscript">
+				<p>JavaScript is required to run the Windshield Damage Assessment application. Please enable JavaScript and reload this page.</p>
+			</div>
+		</noscript>
+		<div dojoType="dijit.layout.BorderContainer" id="centerDiv" gutters="false">
+			<div dojoType="dijit.layout.ContentPane" class ='header' id="headDiv" region="top" splitter="true">
+				<div id='header'>
+					<span>Select Beat Plan</span>
+					<input id='plan' class='combo'/>
+					<span>Select Beat</span>
+					<input id='beat' class='combo'/>
+					<div class='inline'>
+						<button dojoType="dijit.form.Button" id="parcelzoombutton" label="Zoom to Parcels" onClick="zoomToParcels" showLabel="false" iconClass="parcelzoomIcon">Zoom to Parcels</button>
+						<button dojoType="dijit.form.Button" id="worldzoombutton" label="Zoom to County" onClick="zoomToWorld" showLabel="false" iconClass="worldzoomIcon">Zoom to County</button>
+						<button dojoType="dijit.form.ToggleButton" id="tracebutton" label="Select By Line" onClick="startDraw" class="labeledButton">Select By Line</button>
+						<button dojoType="dijit.form.Button" id="submitbutton" label="Send Reports" onClick="sendReports" showLabel="true" class="labeledButton">Send Reports</button>
+					</div>
+					<span class='header' id='sendingspan'></span>
+					<div class="inline combo right"><a href="help.html">Help</a></div>
+				</div>
+			</div>
+			<!-- Start Main Map Pane-->
+	    	<div dojoType="mapdijits.BaseMap" name="map" id="map" region="center" showArcGISBasemaps="false">
+				<div dojoType="mapdijits.layers.ArcGISDynamicMapServiceLayer" id="display" url="http://sssgis05.stlouisco.net/ArcGIS/rest/services/WDA/DamageAssessmentInternal/MapServer" disableClientCaching="true"></div>
+				<div dojoType="mapdijits.layers.Basemap" id="Street" thumbnailUrl="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/PublicBase/MapServer/export?bbox=830872.5256642525%2C+1020857.1561439869%2C+864205.8589975857%2C+1036836.3228106536&bboxSR=&layers=0&layerdefs=&size=100%2C67&imageSR=&format=png&transparent=false&dpi=96&f=image" title="Street">
+					<div dojoType="mapdijits.layers.BasemapLayer" id="publicbase2"  isReference="true" url="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/PublicBase/MapServer"></div>
+					<div dojoType="mapdijits.layers.BasemapLayer" id="publicbase3"  isReference="false" url="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/PublicBase/MapServer"></div>
+				</div>
+				<div dojoType="mapdijits.layers.Basemap" id="Aerial" thumbnailUrl="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/Aerials2010/MapServer/export?bbox=830872.5256642525%2C+1020857.1561439869%2C+864205.8589975857%2C+1036836.3228106536&bboxSR=&layers=0&layerdefs=&size=100%2C67&imageSR=&format=png&transparent=false&dpi=96&f=image" title="Satellite">
+					<div dojoType="mapdijits.layers.BasemapLayer" id="publicbase" isReference="true" url="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/PublicBase/MapServer"></div>
+					<div dojoType="mapdijits.layers.BasemapLayer" id="Aerial2010" url="http://sssgissom2.stlouisco.net/ArcGIS/rest/services/Maps/Aerials2010/MapServer"></div>
+				</div>
+			</div>
+			<!-- End Main Map Pane -->
+		</div>
+
+	<script type="text/javascript">
+		window.djConfig = {
+			isDebug: false,
+			parseOnLoad:true,
+			baseUrl: "./",
+			modulePaths: {
+				"mapdijits": "../mapdijits"
+			},
+			useXDomain: true,
+			xdWaitSeconds: 10
+		};
+	</script>
+		<script type="text/javascript" src = 'http://sssgis05.stlouisco.net/arcgis_js_api/library/2.4/arcgis/' ></script>
+		<script type="text/javascript">
+			dojo.require("esri.map");
+			dojo.require("esri.layers.FeatureLayer");
+			dojo.require("esri.tasks.query");
+			dojo.require("dijit.layout.BorderContainer");
+			dojo.require("dijit.form.Button");
+			dojo.require("dijit.form.ComboBox");
+			dojo.require("dojo.parser");
+			dojo.require("dojo.data.ItemFileReadStore");
+			dojo.require("mapdijits.BaseMap");
+			dojo.require("mapdijits.layers");
+			esri.config.defaults.map.sliderLabel = {
+				labels: ["","","","","","","","Edit","....","....","Edit"],
+				tick: 5,
+				style: "width:2em; font-family:Verdana; font-size:75%; color:red"
+			};
+			mapdijits.mapConfig = {
+				extent : new esri.geometry.Extent({
+					"xmin": 720832.595108697,
+					"ymin": 937065.838172904,
+					"xmax": 956943.706219808,
+					"ymax": 1102710.97411507,
+					"spatialReference": {
+						"wkid": 102696
+					}
+				})
+			};
+			var mapDiv, beatComboBox, planComboBox, traceButton;
+			var editLayer, selectionLayer, displayLayer, displayLayer2;
+			var beatQuery, editQuery;
+			var sending = 0;
+
+			//var aerialservice = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer";
+			//var overlayservice = "http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer";
+			var displayservice2 = "http://sssgis05.stlouisco.net/ArcGIS/rest/services/WDA/DamageAssessmentInternal/MapServer";
+			var overlayservice = "http://sssgis05.stlouisco.net/ArcGIS/rest/services/Maps/PublicBase/MapServer";
+			var displayservice = "http://sssgis05.stlouisco.net/ArcGIS/rest/services/WDA/Precincts/MapServer";
+			
+			var selectionservice = "http://sssgis05.stlouisco.net/ArcGIS/rest/services/WDA/Beats/FeatureServer/0"
+			var editservice = "http://sssgis05.stlouisco.net/ArcGIS/rest/services/WDA/DamageAssessment/FeatureServer/0";
+			var planStoreUrl = "./beatplans.json";
+			var beatStoreUrl = "./beat.json";
+			var editAttribute = "WDAStatus";
+			var editStates = {
+				"-1":0,
+				"0":3,
+				"3":-1
+			};
+			var parcelZoomLevel = 7;
+
+			function init() {
+				traceButton = dijit.byId("tracebutton");
+				beatQuery = new esri.tasks.Query();
+				editQuery = new esri.tasks.Query();
+				var planStore = new dojo.data.ItemFileReadStore({
+					url: planStoreUrl
+				});
+				var beatStore = new dojo.data.ItemFileReadStore({
+					url: beatStoreUrl
+				});
+					
+				beatComboBox = new dijit.form.ComboBox({
+					store: beatStore,
+					autoComplete: true,
+					name: "beat",
+					query: {
+						plan: "Beat Plan"
+					},
+					value: "Beat",
+					searchAttr: "beat",
+					required: true,
+					id: "beat",
+					field: "BEAT",
+					"class": "combo"
+				}, "beat");
+				beatComboBox.oc = dojo.connect(beatComboBox, "onChange", function(value) {
+						if (value != "Beat") {
+							highlightBeat();
+						};
+				});
+				beatComboBox.ldd = dojo.connect(beatComboBox, "loadDropDown", function(dd) {
+					beatComboBox.ocdd = dojo.connect(beatComboBox.dropDown, "onChange", function(v) {
+						if (beatComboBox.get("Value") != "Beat") {
+							highlightBeat();
+						};
+					});
+					dojo.disconnect(beatComboBox.ldd);
+				});
+				planComboBox = new dijit.form.ComboBox({
+					store: planStore,
+					autoComplete: true,
+					name: "plan",
+					searchAttr: "plan",
+					value: "Beat Plan",
+					required: true,
+					id: "plan",
+					"class": "combo",
+					onChange: function (plan) {
+						if (plan != beatComboBox.query.plan) {
+							beatComboBox.query.plan = plan;
+							beatComboBox.set("Value","Beat");
+						}
+					},
+					field: "PLAN_"
+				}, "plan");
+				mapDiv = dijit.byId("map");
+				dijit.byId("centerDiv").layout();
+				selectionLayer = new esri.layers.FeatureLayer(selectionservice,{
+					mode: esri.layers.FeatureLayer.MODE_SELECTION,
+					outFields: ["PLAN_", "BEAT"]
+				});
+				selectionLayer.setSelectionSymbol(new esri.symbol.SimpleFillSymbol("solid", new esri.symbol.SimpleLineSymbol("solid", new dojo.Color([127,0,0]), 2), new dojo.Color([0,0,0,0.2])));
+				editLayer = new esri.layers.FeatureLayer(editservice,{
+					mode: esri.layers.FeatureLayer.MODE_SELECTION,
+					opacity: .8
+				});
+				dojo.connect(mapDiv.map, "enableDoubleClickZoom", function(){
+					mapDiv.map.disableDoubleClickZoom();
+				});
+				dojo.connect(mapDiv.map, "onLoad", function(map){
+					map.disablePan();
+					initSelectToolbar(map);
+				});
+				mapDiv.addLayer(selectionLayer);
+				mapDiv.addLayer(editLayer).then(function(layer){
+					var symbolNotVisited = layer.renderer.infos[4].symbol;
+					var symbolNone = layer.renderer.infos[3].symbol;
+					var symbolDamaged = layer.renderer.infos[0].symbol;
+					symbolNotVisited.color = new dojo.Color([0,255,255,1]);
+					symbolNone.color = new dojo.Color([127,255,127,1]);
+					symbolDamaged.color = new dojo.Color([255,0,0,1]);
+					layer.renderer.removeValue("3");
+					layer.renderer.removeValue("0");
+					layer.renderer.removeValue("-1");
+					layer.renderer.addValue("3", symbolDamaged);				
+					layer.renderer.addValue("0", symbolNone);				
+					layer.renderer.addValue("-1", symbolNotVisited);
+					dojo.connect(layer, "onEditsComplete", refreshDisplay);
+				});
+				//displayLayer2 = new esri.layers.ArcGISDynamicMapServiceLayer(displayservice2);
+				//displayLayer2.setDisableClientCaching(true);
+				//mapDiv.addLayer(displayLayer2);
+				//mapDiv.addLayer("Precincts", displayservice).addCallback(function(l){displayLayer = l;});
+				displayLayer2 = dijit.byId("display").getLayer();
+				dojo.connect(mapDiv.map, "onClick", onClickParcel);
+				dojo.connect(mapDiv.map, "onDblClick", onDblClickParcel);
+				dojo.connect(mapDiv.map, "onMouseDragStart", onMouseDragStart);
+			}
+			function highlightBeat(item){
+				beatQuery.where = planComboBox.field + " = '" + planComboBox.get('Value') +"' AND " + beatComboBox.field + " = '" + beatComboBox.get('Value') + "'";
+				selectionLayer.selectFeatures(beatQuery, esri.layers.FeatureLayer.SELECTION_NEW, zoomToBeat);
+			}
+			function zoomToBeat(response){
+				if (response.length > 0) {
+					var g = response[0].geometry.getExtent();
+					for (r in response) {
+						g = g.union(response[r].geometry.getExtent());
+					}
+					mapDiv.map.setExtent(g, true);
+				};
+			}
+			function zoomToParcels(){
+				mapDiv.map.setLevel(parcelZoomLevel);
+			}
+			function zoomToWorld(){
+				mapDiv.map.setExtent(mapdijits.mapConfig.extent, false);
+			}
+			function onClickParcel(event){
+				console.log("Click");
+				if (!traceButton.checked && mapDiv.map.getLevel() >= parcelZoomLevel && event.shiftKey == false){
+					toggleFeature(event.mapPoint, 1);
+					return;
+				}
+			}
+			function onDblClickParcel(event){
+				console.log("DoubleClick");
+				if (!traceButton.checked && mapDiv.map.getLevel() >= parcelZoomLevel && event.shiftKey == false){
+					toggleFeature(event.mapPoint, 2);
+					return;
+				} else {
+					mapDiv.centerAndZoom(event.mapPoint, mapDiv.map.getLevel() + 1);
+				}
+			}
+			function onMouseDragStart(event){
+				console.log("MouseDragStart");
+				event = dojo.fixEvent(event, event.target);
+				if (!traceButton.checked && mapDiv.map.getLevel() >= parcelZoomLevel && event.shiftKey == false){
+					event.screenPoint = esri.geometry.Point(event.pageX - mapDiv.map.position.x, event.pageY - mapDiv.map.position.y);
+					event.mapPoint = mapDiv.map.toMap(event.screenPoint);
+					toggleFeature(event.mapPoint, 1);
+				}
+				return;
+			}
+			function toggleFeature(geometry, clicks){
+				editQuery.geometry = geometry;
+				editLayer.selectFeatures(editQuery, esri.layers.FeatureLayer.SELECTION_ADD, function(response){
+					for (var i=0;i<response.length;i++) {
+						var g = response[i];
+						for (var t=0;t<clicks;t++){
+							g.attributes[editAttribute] = editStates[g.attributes[editAttribute].toString()];
+							g.setSymbol(editLayer.renderer.getSymbol(g));
+						}
+					}
+				});
+			}
+			function refreshDisplay(){
+				displayLayer2.refresh();
+			};
+			function sendReports(){
+				var response = editLayer.getSelectedFeatures();
+				if (response.length > 0) {
+					sending = sending + response.length;
+					dojo.byId("sendingspan").innerHTML = "Sending " + sending + " report" + ((sending == 1) ? "." : "s.");
+					editLayer.applyEdits(null, response, null, function(a,u,d){
+						sending = sending - u.length;
+						dojo.byId("sendingspan").innerHTML = (sending) ? "Sending " + sending + " report" + ((sending ==1) ? "." : "s.") : "Done.";
+						editLayer.clearSelection();
+					}, function(e1){
+						console.log("Communication error");
+						console.log(e1);
+						console.log("Check Server Logs.");
+						dojo.byId("sendingspan").innerHTML = (--sending) ? "Communication Error. Sending " + sending + " report" + ((sending ==1) ? "." : "s.") : "Communication Error. Done.";
+					});
+				} else {
+						dojo.byId("sendingspan").innerHTML = "No new reports to send.";					
+				}
+			};
+			function initSelectToolbar(map){
+				selectionToolbar = new esri.toolbars.Draw(map);
+				dojo.connect(selectionToolbar, "onDrawEnd", function(geometry) {
+					toggleFeature(geometry, 1);
+					endDraw();
+				});				
+			};
+			function startDraw() {
+				if (traceButton.checked && mapDiv.map.getLevel() >= parcelZoomLevel){
+					selectionToolbar.activate(esri.toolbars.Draw.FREEHAND_POLYLINE);
+					traceButton.set('label', 'Drawing...');
+				} else {
+					endDraw();
+				}
+			};
+			function endDraw() {
+					selectionToolbar.deactivate();
+					traceButton.set('checked', false);
+					traceButton.set('label', 'Select by Line');				
+			}
+			dojo.addOnLoad(init);
+			
+		</script>
+    </body>
+</html>

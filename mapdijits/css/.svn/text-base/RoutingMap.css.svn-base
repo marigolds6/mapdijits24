@@ -1,0 +1,14 @@
+.mapdijitRoutingMapMain {
+	border: 1px solid #E6E6E6;
+}
+.mapdijitRoutingMapMain .container{
+	background-color:#FFFFFF;
+	width:100%;
+	height:100%;
+}
+.mapdijitRoutingMapMain .mapdijitRoutingMapLoading {
+	height:100%;
+	width:100%;
+	background-repeat:no-repeat;
+	background-position:center; 	
+}

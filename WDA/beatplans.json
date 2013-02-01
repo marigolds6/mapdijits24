@@ -1,0 +1,28 @@
+{
+  identifier:"plan",
+  label: "plan",
+  items: [
+	{plan:"1A"},
+	{plan:"1B"},
+	{plan:"1C"},
+	{plan:"1D"},
+	{plan:"1E"},
+	{plan:"1F"},
+	{plan:"2B2"},
+	{plan:"3A"},
+	{plan:"3B"},
+	{plan:"4A"},
+	{plan:"5A5"},
+	{plan:"5B5"},
+	{plan:"6A"},
+	{plan:"6B"},
+	{plan:"6C"},
+	{plan:"6D"},
+	{plan:"6E"},
+	{plan:"6F"},
+	{plan:"7A"},
+	{plan:"7C"},
+	{plan:"8A"},
+	{plan:"8B"}
+  ]
+}

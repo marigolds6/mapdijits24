@@ -1,0 +1,55 @@
+.mapdijitsSearchPane {
+	overflow: hidden;
+	width: 100em;
+	clear:both;
+	margin: 0;
+}
+.mapdijitsSearchPane .mapdijitsSearchColumn {
+	float: left;
+	font-size: 81%;	
+}
+.mapdijitsSearchPane .mapdijitsSearchControl {
+	padding-top: 1.4em;
+}
+.mapdijitsSearchPane .mapdijitsSearchSpacer {
+	padding-top: 1.4em;
+}
+.mapdijitsSearchPane .mapdijitsSearchLogo {
+	height: 67px;
+	width: 170px;
+}
+.mapdijitsSearchLogoNode img {
+	padding: 3px 10px;
+	height: 50px;
+	width: 150px;
+}
+.mapdijitsSearchPane .mapdijitsSearchTitle {
+	display: none;
+}
+
+.mapdijitsSearchPane .mapdijitsSearchAddress{
+	width: 33em;
+}
+.mapdijitsSearchPane .mapdijitsSearchButton{
+	margin-left: 0.35em;
+}
+.mapdijitsSearchPane .mapdijitsSearchExample {
+	color: #808080;
+	font-size: 85%;
+	margin-top: 2px;
+	text-align: left;
+	white-space: nowrap;	
+}
+.mapdijitsSearchPane .mapdijitsSearchLearnMore {
+	color: #7777CC;
+	text-decoration: underline;
+	cursor:pointer;
+}
+.mapdijitsSearchContent ol {
+	display: none;
+}
+/*
+.mapdijitsSearchPane .mapdijitsSearchContent ol li {
+	display: none;
+}
+*/

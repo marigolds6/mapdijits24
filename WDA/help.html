@@ -1,0 +1,138 @@
+<html>
+	<head>
+		<title>Help - Windshield Damage Assessment</title>
+		<style>
+			.selector {
+				color: red;
+			}
+
+			.heading {
+				background-color: #D8E0E2;
+				background-repeat: repeat-x;
+				border-bottom: 1px solid #FFFFFF;
+				border-top: 1px solid #FFFFFF;
+				color: black;
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-size: 16px;
+				font-weight: bold;
+				letter-spacing: 1.1px;
+				margin: 15px 0 10px;
+				padding: 3px 10px;
+				text-align: center;
+			}
+			.red {
+				color: #f00;
+			}
+		</style>
+	</head>
+	<body>
+		<div><a href="index.html">BACK TO MAP</a></div>
+		<h2>How to Use Windshield Damage Assessment</h2>
+
+		<p><strong>Send Reports after your first entry to make sure the reporting service is connected and functioning for you!</strong></p>
+		
+		<div class="heading">Table of Contents</div>
+		<ul>
+			<li><a href="#find">Find Your Location</a></li>
+			<li><a href="#record">Record Damage</a></li>
+			<li><a href="#troubleshooting">Troubleshooting</a></li>
+		</ul>
+		
+		<a name="find"></a>
+		<h3 class="heading">Find Your Location</h3>
+		<ol>
+			<li><strong>Center on your location</strong>
+				<ol><em>Unincorporated or Contract Munis</em>
+					<li>Select your current Beat Plan</li>
+					<li>Select your Beat</li>
+					<li>Map will automatically zoom into your beat</li>
+				</ol>
+				<br>
+				<ul><em>Other areas</em>
+					<li>Move mouse over the map</li>
+					<li>Zoom in with +</li>
+					<li>Zoom out with -</li>
+					<li>Move around the map with the arrow keys</li>
+					<li>Zoom to a box by holding down shift and touch/click and dragging. You should see a red box that will be your zoom area.</li>
+					<li>You can also zoom in and out using the slider on the left hand side of the screen.</li>
+				</ul>
+			</li>
+			<br>
+			<div><strong>Need to zoom back out to start?</strong></div>
+				<div>Click the globe button.</div>
+			<div><strong>Want to see aerial photos with the property boundaries and roads?</strong></div>
+				<ol>
+					<li>In the top right corner of the map, click on "Switch Basemap". This will expand the basemap selection window.</li>
+					<li>Click on "Satellite" to turn on aerial photos (currently from 2010). To switch back to street map only, select "Street".</li>
+					<li>Click on "Switch Basemap" again to minimize the basemap selection window.</li>
+				</ol>
+			<br>
+			<li><strong>Zoom to edit level to record damage</strong>
+				<ul>
+					<li>Do this by clicking the Zoom to parcel button.</li>
+					<li>You can zoom in closer and still edit, but if you zoom out farther, editing will be disabled until you zoom back in.</li>
+				</ul>
+			</li>
+		</ol>
+		<div><a href="#">Top</a></div>
+		
+		<a name="record"></a>
+		<h3 class="heading">Record Damage</h3>
+		<div><em>You must be at one of the <span class="red">Edit</span> zoom levels (top 4 notches on the zoom slider).<br>If you are zoomed out too far, damage recording will be disabled.</em></div>
+		<br>
+		<div><strong>To change the record for a property, tap it once.</strong></div>
+		<div>
+			<ol><em>As you touch each property, it cycles through three states.</em>
+				<li>Green - No Damage.</li>
+				<li>Red - Damage. This includes all levels of damage from shingles missing to house levelled.</li>
+				<li>Blue - Clear record. <em>ONLY USE THIS TO CORRECT MISTAKES</em>.</li>
+			</ol>
+		</div>
+		<div>Double-clicking/double-tapping will advance the property two steps on the cycle.</div>
+		<br/>	
+		<div><strong>Select by line</strong></div>
+		<ol><em>You can also change a whole group of properties at once.</em>
+			<li>Touch "Select by Line" and the button changes to "Drawing..." to show you are in draw mode.</li>
+			<li>Trace a line over the properties you want to change. Each property touched by the line will cycle up one state.</li>
+			<li>The line can loop and overlap itself, but will only advance each property once per trace.</li>
+			<ul><em>Example</em>:
+				<li>Trace a line through two clear properties and two green properties.</li>
+				<li>The two clear properties will change to green and the two green properties to red.</li>
+			</ul>
+			<ul><em>Example</em>:
+				<li>To mark an entire clear block damaged, choose Select by Line and trace through each property in the block. All the properties will turn green.</li>
+				<li>Choose Select by Line again and trace through all the green properties again. All of those properties will now turn blue.</li>
+			</ul>
+			<li>You can correct mistakes by clicking individual properties until they are at the right state.</li>
+		</ol>
+
+		<div><strong>Sending reports</strong></div>
+		<ol><em>Once you have finished recording damaged and undamaged properties, you still need to send your reports.</em>
+			<li>Click the "Send Reports" button.</li>
+			<li>Next to the button you will see a message that says "Sending # Reports.", where # is the number of properties you have changed.</li>
+			<li>When the changes are sent, that message will change to "Done." Wait until you see this message before recording more damage.</li>
+		</ol>
+		<div><a href="#">Top</a></div>
+
+		<a name="troubleshooting"></a>
+		<h3 class="heading">Troubleshooting</h3>
+		<strong>Properties are not changing color</strong>
+		<ul>
+			<li>The map services are down. Ask dispatch to notify Emergency Management or <a href="mailto:blord-castillo@stlouisco.com?subject=WDA%20cannot%20send%20reports.">send an email to Brett Lord-Castillo</a>.</li>
+			<li>In an emergency, a police staff message will be sent out when the services are back up.</li>
+			<li>In testing, you will be notified directly.</li>
+		</ul>
+		<strong>Arrow keys not working</strong>
+		<ul>
+			<li>Make sure the mouse is centered over the map and not the top banner or zoom slider.</li>
+		</ul>
+		<strong>Send reports fails</strong>
+		<ul>
+			<li>You should always do your first "Send Reports" after your first entry. If the send fails, wait 30 seconds to and second time (the report service might have been initializing).</li>
+			<li>If the send fails a second time, ask dispatch to notify Emergency Management or <a href="mailto:blord-castillo@stlouisco.com?subject=WDA%20cannot%20send%20reports.">send an email to Brett Lord-Castillo</a>.</li>
+		</ul>
+		<div><a href="#">Top</a></div>
+		<br>
+		<div><a href="index.html">BACK TO MAP</a></div>
+	</body>
+</html>

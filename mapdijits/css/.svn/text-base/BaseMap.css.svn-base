@@ -1,0 +1,26 @@
+.mapdijitBaseMapMain {
+	border: 1px solid #E6E6E6;
+}
+.mapdijitBaseMapMain .container{
+	background-color:#FFFFFF;
+	width:100%;
+	height:100%;
+}
+.mapdijitBaseMapMain .copyrighttext {
+	position:absolute; left:6px; bottom: 6px; z-index:100; font-size:80%;
+	background-color: #FFFFFF;
+}
+.mapdijitBaseMapLoading {
+	z-index:100;
+	height:100%;
+	width:100%;
+	position: absolute;
+	display: block;
+	background-image: url('../assets/images/loading.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.mapdijitsHideInfoWindow {
+	visibility:hidden;
+}
